@@ -1,0 +1,118 @@
+# ============================================
+# OpenSpec v1 - AID Service Configuration
+# Metal Processing Simulation Service
+# ============================================
+openspec: v1
+
+project:
+  name: aid-service
+  version: 1.0.0
+  description: |
+    AID Service - 金属加工仿真系统服务端
+    对接AID-client-SDK，提供仿真任务全生命周期管理API
+    支持拉弯、冲压、挤压等多种金属成型仿真工艺
+  
+  tech_stack:
+    backend:
+      language: Python
+      framework: FastAPI
+      database: SQLite
+      async: true
+    
+    deployment:
+      container: Docker
+      port: 8080
+
+capabilities:
+  - name: task_management
+    description: 仿真任务全生命周期管理
+    type: api_service
+    priority: high
+    apis:
+      - newTaskCreate
+      - uploadParamfiles
+      - newTaskverify
+      - startTask
+      - queryTaskStatus
+      - stopTask
+      - deleteTask
+      - fetchTaskResult
+    
+  - name: authentication
+    description: API Key身份认证
+    type: auth_service
+    priority: high
+    
+  - name: file_management
+    description: 仿真参数文件上传下载管理
+    type: file_service
+    priority: high
+    
+  - name: database
+    description: SQLite数据库管理
+    type: data_service
+    priority: medium
+
+data:
+  simulate_types:
+    - LaWan
+    - CHOnYA
+    - ZhuZao
+    - ZhaZhi
+    - ZHEWan
+    - JIYA
+  
+  required_files:
+    - config.yml
+    - feature_line_ref_0.stp
+    - feature_line_ref_1.stp
+    - left_boundary.txt
+    - materials.csv
+    - mould_section.stp
+    - strip_section.stp
+  
+  file_formats: [stp, txt, csv, yml, jnl]
+  max_file_size: 104857600  # 100MB
+  max_total_size: 524288000  # 500MB
+
+interfaces:
+  rest_api:
+    base_url: /aid-service
+    version: v1
+    auth: api_key
+    
+  endpoints:
+    - path: /newTaskCreate
+      method: POST
+    - path: /uploadParamfiles
+      method: POST
+    - path: /newTaskverify
+      method: POST
+    - path: /startTask
+      method: POST
+    - path: /queryTaskStatus
+      method: POST
+    - path: /stopTask
+      method: POST
+    - path: /deleteTask
+      method: POST
+    - path: /fetchTaskResult
+      method: POST
+
+error_codes:
+  200: 操作成功
+  301: 任务创建失败
+  302: 工作文件缺失/校验失败
+  303: 上传文件失败
+  401: 任务开始失败
+  402: 任务停止失败
+  403: 任务删除失败
+  404: 获取结果/状态失败
+  500: 算法服务内部运行错误
+
+workflow:
+  phases:
+    - specification
+    - implementation
+    - testing
+    - deployment
