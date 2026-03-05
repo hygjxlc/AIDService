@@ -165,7 +165,7 @@ async def query_task_status(request: TaskRequest, db: Session = Depends(get_db))
     )
 
 
-@router.post("/fetachTaskResult")
+@router.post("/fetchTaskResult")
 async def fetch_task_result(request: TaskRequest, db: Session = Depends(get_db)):
     """Fetch task result file (TASK-014)"""
     service = TaskService(db)
