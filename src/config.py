@@ -6,6 +6,12 @@ import yaml
 
 
 @dataclass
+class ServerConfig:
+    host: str = "0.0.0.0"
+    port: int = 8080
+
+
+@dataclass
 class AuthConfig:
     api_key: str = "11111111"
 
@@ -42,6 +48,7 @@ class LoggingConfig:
 
 @dataclass
 class AppConfig:
+    server: ServerConfig = field(default_factory=ServerConfig)
     auth: AuthConfig = field(default_factory=AuthConfig)
     internal: InternalConfig = field(default_factory=InternalConfig)
     database: DatabaseConfig = field(default_factory=DatabaseConfig)
@@ -58,6 +65,10 @@ def load_config(config_path: str = "app_config.yaml") -> AppConfig:
         with open(config_path, "r", encoding="utf-8") as f:
             data = yaml.safe_load(f) or {}
         
+        # Parse auth config
+        if "server" in data:
+            config.server = ServerConfig(**data["server"])
+
         # Parse auth config
         if "auth" in data:
             config.auth = AuthConfig(**data["auth"])
